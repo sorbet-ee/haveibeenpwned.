@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    haveibeenpwned (0.1.0)
+    sorbet-hibp (0.1.0)
       faraday (~> 2.0)
 
 GEM
@@ -39,9 +39,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  haveibeenpwned!
   minitest (~> 5.0)
   rake (~> 13.0)
+  sorbet-hibp!
   webmock (~> 3.0)
 
 BUNDLED WITH

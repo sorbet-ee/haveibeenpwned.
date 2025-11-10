@@ -22,7 +22,7 @@
 # ----------------------------------------------------------------------------
 
 # Gem name (used for building and cleaning)
-GEM_NAME := haveibeenpwned
+GEM_NAME := sorbet-hibp
 
 # Current version (extracted from version.rb)
 VERSION := $(shell ruby -r ./lib/haveibeenpwned/version.rb -e 'puts HaveIBeenPwned::VERSION')
