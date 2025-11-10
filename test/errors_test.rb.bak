@@ -1,0 +1,144 @@
+# frozen_string_literal: true
+
+require_relative "test_helper"
+
+class ErrorsTest < Minitest::Test
+  include TestHelpers
+
+  def setup
+    WebMock.disable_net_connect!
+  end
+
+  def teardown
+    WebMock.allow_net_connect!
+  end
+
+  def test_not_found_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 404, body: "Not found")
+
+    assert_raises(HaveIBeenPwned::NotFoundError) do
+      test_client.breached_account("test@example.com")
+    end
+  end
+
+  def test_unauthorized_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 401, body: "Unauthorised")
+
+    assert_raises(HaveIBeenPwned::UnauthorizedError) do
+      test_client.breached_account("test@example.com")
+    end
+  end
+
+  def test_forbidden_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 403, body: "Forbidden")
+
+    assert_raises(HaveIBeenPwned::ForbiddenError) do
+      test_client.breached_account("test@example.com")
+    end
+  end
+
+  def test_bad_request_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 400, body: "Bad request")
+
+    assert_raises(HaveIBeenPwned::BadRequestError) do
+      test_client.breached_account("test@example.com")
+    end
+  end
+
+  def test_rate_limit_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(
+        status: 429,
+        headers: { "retry-after" => "5" },
+        body: '{"message":"Rate limit exceeded"}'
+      )
+
+    error = assert_raises(HaveIBeenPwned::RateLimitError) do
+      test_client.breached_account("test@example.com")
+    end
+
+    assert_equal 5, error.retry_after
+    assert_match(/rate limit/i, error.message)
+  end
+
+  def test_rate_limit_error_without_retry_after
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 429, body: "Too many requests")
+
+    error = assert_raises(HaveIBeenPwned::RateLimitError) do
+      test_client.breached_account("test@example.com")
+    end
+
+    assert_nil error.retry_after
+  end
+
+  def test_service_unavailable_error
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 503, body: "Service unavailable")
+
+    assert_raises(HaveIBeenPwned::ServiceUnavailableError) do
+      test_client.breached_account("test@example.com")
+    end
+  end
+
+  def test_unexpected_error_code
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 500, body: "Internal server error")
+
+    error = assert_raises(HaveIBeenPwned::Error) do
+      test_client.breached_account("test@example.com")
+    end
+
+    assert_match(/unexpected response/i, error.message)
+    assert_match(/500/, error.message)
+  end
+
+  def test_error_inheritance
+    assert HaveIBeenPwned::BadRequestError < HaveIBeenPwned::Error
+    assert HaveIBeenPwned::UnauthorizedError < HaveIBeenPwned::Error
+    assert HaveIBeenPwned::ForbiddenError < HaveIBeenPwned::Error
+    assert HaveIBeenPwned::NotFoundError < HaveIBeenPwned::Error
+    assert HaveIBeenPwned::RateLimitError < HaveIBeenPwned::Error
+    assert HaveIBeenPwned::ServiceUnavailableError < HaveIBeenPwned::Error
+  end
+
+  def test_error_with_json_response
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(
+        status: 401,
+        body: '{"statusCode":401,"message":"Access denied"}'
+      )
+
+    error = assert_raises(HaveIBeenPwned::UnauthorizedError) do
+      test_client.breached_account("test@example.com")
+    end
+
+    assert_match(/access denied/i, error.message)
+  end
+
+  def test_error_with_plain_text_response
+    stub_request(:get, %r{haveibeenpwned\.com/api/v3/breachedaccount/.*})
+      .to_return(status: 403, body: "Forbidden - no user agent specified")
+
+    error = assert_raises(HaveIBeenPwned::ForbiddenError) do
+      test_client.breached_account("test@example.com")
+    end
+
+    assert_match(/forbidden/i, error.message)
+  end
+
+  def test_pwned_passwords_error
+    stub_request(:get, %r{api\.pwnedpasswords\.com/range/.*})
+      .to_return(status: 500, body: "Internal server error")
+
+    error = assert_raises(HaveIBeenPwned::Error) do
+      HaveIBeenPwned::PwnedPasswords.check("password")
+    end
+
+    assert_match(/unexpected response/i, error.message)
+  end
+end
