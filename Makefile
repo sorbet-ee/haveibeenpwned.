@@ -72,7 +72,7 @@ NC := \033[0m # No Color
 # The default target runs when you type 'make' without arguments
 # We default to running tests as it's the most common development task
 
-default: test
+default: help
 
 # ----------------------------------------------------------------------------
 # Help Target
