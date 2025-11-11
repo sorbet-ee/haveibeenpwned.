@@ -1,4 +1,4 @@
-# HaveIBeenPwned
+# sorbet-hibp
 
 A simple, clean Ruby wrapper for the Have I Been Pwned API v3.
 
@@ -7,7 +7,7 @@ A simple, clean Ruby wrapper for the Have I Been Pwned API v3.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'haveibeenpwned'
+gem 'sorbet-hibp'
 ```
 
 And then execute:
@@ -19,7 +19,7 @@ bundle install
 Or install it yourself as:
 
 ```bash
-gem install haveibeenpwned
+gem install sorbet-hibp
 ```
 
 ## Usage
