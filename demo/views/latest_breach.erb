@@ -1,0 +1,47 @@
+<h2>🆕 Latest Breach</h2>
+
+<p>View the most recently added breach to the Have I Been Pwned database.</p>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Latest Breach: <%= @result['Title'] || @result['Name'] %></h3>
+
+    <div class="breach-card">
+      <% if @result['Domain'] %>
+        <p><strong>Domain:</strong> <%= @result['Domain'] %></p>
+      <% end %>
+      <% if @result['BreachDate'] %>
+        <p><strong>Breach Date:</strong> <%= @result['BreachDate'] %></p>
+      <% end %>
+      <% if @result['AddedDate'] %>
+        <p><strong>Added to HIBP:</strong> <%= @result['AddedDate'] %></p>
+      <% end %>
+      <% if @result['PwnCount'] %>
+        <p><strong>Accounts Affected:</strong> <%= @result['PwnCount'].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></p>
+      <% end %>
+      <% if @result['Description'] %>
+        <p><strong>Description:</strong></p>
+        <p><%= @result['Description'] %></p>
+      <% end %>
+      <% if @result['DataClasses'] && @result['DataClasses'].any? %>
+        <p><strong>Compromised Data:</strong></p>
+        <div>
+          <% @result['DataClasses'].each do |data_class| %>
+            <span class="badge badge-danger"><%= data_class %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<p style="margin-top: 30px;"><a href="/breaches">← View All Breaches</a></p>

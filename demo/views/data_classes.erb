@@ -1,0 +1,29 @@
+<h2>📊 Data Classes</h2>
+
+<p>View all types of data that can be compromised in breaches.</p>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>All Data Classes (<%= @result.length %>)</h3>
+
+    <div style="margin-top: 20px;">
+      <% @result.sort.each do |data_class| %>
+        <span class="badge badge-info"><%= data_class %></span>
+      <% end %>
+    </div>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>About Data Classes</h3>
+  <p>Data classes represent the types of information that can be exposed in a data breach. When you look up a breached account, you'll see which of these data types were compromised.</p>
+</div>

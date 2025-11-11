@@ -1,0 +1,88 @@
+<h2>🔎 Single Breach Lookup</h2>
+
+<p>Get detailed information about a specific data breach by name.</p>
+
+<form method="post" action="/breach">
+  <div class="form-group">
+    <label for="breach_name">Breach Name:</label>
+    <input type="text" id="breach_name" name="breach_name" placeholder="Adobe" required>
+  </div>
+
+  <button type="submit">Get Breach Details</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3><%= @result['Title'] || @result['Name'] %></h3>
+
+    <div class="breach-card">
+      <% if @result['Domain'] %>
+        <p><strong>Domain:</strong> <%= @result['Domain'] %></p>
+      <% end %>
+      <% if @result['BreachDate'] %>
+        <p><strong>Breach Date:</strong> <%= @result['BreachDate'] %></p>
+      <% end %>
+      <% if @result['AddedDate'] %>
+        <p><strong>Added to HIBP:</strong> <%= @result['AddedDate'] %></p>
+      <% end %>
+      <% if @result['ModifiedDate'] %>
+        <p><strong>Last Modified:</strong> <%= @result['ModifiedDate'] %></p>
+      <% end %>
+      <% if @result['PwnCount'] %>
+        <p><strong>Accounts Affected:</strong> <%= @result['PwnCount'].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></p>
+      <% end %>
+      <% if @result['Description'] %>
+        <p><strong>Description:</strong></p>
+        <p><%= @result['Description'] %></p>
+      <% end %>
+      <% if @result['DataClasses'] && @result['DataClasses'].any? %>
+        <p><strong>Compromised Data Types:</strong></p>
+        <div>
+          <% @result['DataClasses'].each do |data_class| %>
+            <span class="badge badge-danger"><%= data_class %></span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <p style="margin-top: 15px;">
+        <% if @result['IsVerified'] %>
+          <span class="badge badge-success">✓ Verified</span>
+        <% else %>
+          <span class="badge badge-info">Unverified</span>
+        <% end %>
+
+        <% if @result['IsSensitive'] %>
+          <span class="badge badge-danger">Sensitive</span>
+        <% end %>
+
+        <% if @result['IsRetired'] %>
+          <span class="badge badge-info">Retired</span>
+        <% end %>
+
+        <% if @result['IsSpamList'] %>
+          <span class="badge badge-info">Spam List</span>
+        <% end %>
+      </p>
+    </div>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Try These Breaches</h3>
+  <p>Common breach names to search for:</p>
+  <ul style="margin-left: 20px; margin-top: 10px;">
+    <li><code>Adobe</code></li>
+    <li><code>LinkedIn</code></li>
+    <li><code>Dropbox</code></li>
+    <li><code>MySpace</code></li>
+  </ul>
+</div>

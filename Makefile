@@ -63,8 +63,8 @@ NC := \033[0m # No Color
 
 .PHONY: help default all install clean test test-unit test-integration \
         test-verbose test-coverage build release demo demo-passwords \
-        demo-breaches demo-errors console format lint docs deps check \
-        version info
+        demo-breaches demo-errors demo-web demo-web-setup demo-web-config \
+        console format lint docs deps check version info
 
 # ----------------------------------------------------------------------------
 # Default Target
@@ -103,6 +103,8 @@ help:
 	@echo "  demo-passwords - Demo Pwned Passwords API only"
 	@echo "  demo-breaches  - Demo breach lookups with test accounts"
 	@echo "  demo-errors    - Demo error handling"
+	@echo "  demo-web       - Launch Sinatra web demo application"
+	@echo "  demo-web-setup - Setup demo app (install deps, create config)"
 	@echo "  console        - Start IRB console with gem loaded"
 	@echo ""
 	@echo "$(GREEN)Code Quality:$(NC)"
@@ -118,7 +120,8 @@ help:
 	@echo "$(YELLOW)Examples:$(NC)"
 	@echo "  make test TESTOPTS='--verbose'  # Run tests verbosely"
 	@echo "  make install                     # Install gem locally"
-	@echo "  make demo                        # Try out the gem"
+	@echo "  make demo                        # Try out the gem (CLI)"
+	@echo "  make demo-web                    # Launch web demo app"
 
 # ----------------------------------------------------------------------------
 # Setup & Dependencies
@@ -333,6 +336,64 @@ demo-errors: deps
 		puts "  → RateLimitError < Error (with retry_after attribute)"; \
 		puts "  → ServiceUnavailableError < Error"; \
 	'
+
+# Setup and configure the web demo application
+# Installs dependencies and creates config file if needed
+demo-web-setup:
+	@echo "$(CYAN)Setting up web demo application...$(NC)"
+	@if [ ! -d demo ]; then \
+		echo "$(RED)✗ Demo directory not found$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(YELLOW)Installing demo dependencies...$(NC)"
+	@cd demo && $(BUNDLE) install
+	@if [ ! -f demo/config.yml ]; then \
+		echo "$(YELLOW)Creating demo configuration file...$(NC)"; \
+		cp demo/config.yml.example demo/config.yml; \
+		echo "$(GREEN)✓ Created demo/config.yml$(NC)"; \
+		echo "$(YELLOW)⚠ Edit demo/config.yml and add your API key$(NC)"; \
+		echo "$(YELLOW)  Or use test credentials:$(NC)"; \
+		echo "$(YELLOW)    api_key: '00000000000000000000000000000000'$(NC)"; \
+		echo "$(YELLOW)    user_agent: 'Testing'$(NC)"; \
+	else \
+		echo "$(GREEN)✓ Configuration file exists$(NC)"; \
+	fi
+	@echo "$(GREEN)✓ Demo setup complete$(NC)"
+
+# Create or update the config.yml for demo app
+# Prompts user for API key interactively
+demo-web-config:
+	@echo "$(CYAN)Configuring demo application...$(NC)"
+	@if [ ! -f demo/config.yml.example ]; then \
+		echo "$(RED)✗ demo/config.yml.example not found$(NC)"; \
+		exit 1; \
+	fi
+	@cp demo/config.yml.example demo/config.yml
+	@echo "$(GREEN)✓ Created demo/config.yml from template$(NC)"
+	@echo "$(YELLOW)Edit demo/config.yml and add your API key$(NC)"
+	@echo "Get your API key from: $(CYAN)https://haveibeenpwned.com/API/Key$(NC)"
+	@echo ""
+	@echo "$(YELLOW)For testing without an API key, use:$(NC)"
+	@echo "  api_key: '00000000000000000000000000000000'"
+	@echo "  user_agent: 'Testing'"
+
+# Launch the Sinatra web demo application
+# Starts the demo web server on http://localhost:4567
+demo-web: demo-web-setup
+	@echo "$(CYAN)======================================$(NC)"
+	@echo "$(CYAN)  Launching Web Demo Application$(NC)"
+	@echo "$(CYAN)======================================$(NC)"
+	@echo ""
+	@if [ ! -f demo/config.yml ]; then \
+		echo "$(RED)✗ demo/config.yml not found$(NC)"; \
+		echo "$(YELLOW)Run: make demo-web-config$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Starting Sinatra server...$(NC)"
+	@echo "$(YELLOW)Open your browser to: http://localhost:4567$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to stop the server$(NC)"
+	@echo ""
+	@cd demo && $(BUNDLE) exec ruby app.rb
 
 # ----------------------------------------------------------------------------
 # Development Tools

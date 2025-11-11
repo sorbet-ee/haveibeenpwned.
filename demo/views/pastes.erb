@@ -1,0 +1,56 @@
+<h2>📋 Pastes Search</h2>
+
+<p>Search for an email address in public paste sites like Pastebin.</p>
+
+<form method="post" action="/pastes">
+  <div class="form-group">
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" placeholder="test@example.com" required>
+  </div>
+
+  <button type="submit">Search Pastes</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Results for <%= @email %></h3>
+
+    <% if defined?(@message) %>
+      <p><%= @message %></p>
+    <% elsif @result.empty? %>
+      <p>✅ This email address was not found in any pastes.</p>
+    <% else %>
+      <p>Found in <strong><%= @result.length %></strong> paste(s):</p>
+
+      <% @result.each do |paste| %>
+        <div class="breach-card">
+          <h3><%= paste['Title'] || 'Untitled' %></h3>
+          <p><strong>Source:</strong> <%= paste['Source'] %></p>
+          <% if paste['Id'] %>
+            <p><strong>ID:</strong> <%= paste['Id'] %></p>
+          <% end %>
+          <% if paste['Date'] %>
+            <p><strong>Date:</strong> <%= paste['Date'] %></p>
+          <% end %>
+          <% if paste['EmailCount'] %>
+            <p><strong>Emails in paste:</strong> <%= paste['EmailCount'] %></p>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>About Pastes</h3>
+  <p>Pastes are often used by hackers to share lists of compromised credentials. Finding your email in a paste may indicate your credentials have been exposed.</p>
+</div>

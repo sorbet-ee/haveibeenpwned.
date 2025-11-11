@@ -1,0 +1,75 @@
+<h2>📚 All Breaches</h2>
+
+<p>Browse all data breaches in the Have I Been Pwned database.</p>
+
+<form method="post" action="/breaches">
+  <div class="form-group">
+    <label for="domain">Filter by Domain (optional):</label>
+    <input type="text" id="domain" name="domain" placeholder="adobe.com">
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="spam_list" value="true">
+      Show only spam lists
+    </label>
+  </div>
+
+  <button type="submit">Get Breaches</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Found <%= @result.length %> Breach(es)</h3>
+
+    <% if @result.any? %>
+      <% @result.first(10).each do |breach| %>
+        <div class="breach-card">
+          <h3><%= breach['Title'] || breach['Name'] %></h3>
+          <% if breach['Domain'] %>
+            <p><strong>Domain:</strong> <%= breach['Domain'] %></p>
+          <% end %>
+          <% if breach['BreachDate'] %>
+            <p><strong>Date:</strong> <%= breach['BreachDate'] %></p>
+          <% end %>
+          <% if breach['PwnCount'] %>
+            <p><strong>Accounts Affected:</strong> <%= breach['PwnCount'].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></p>
+          <% end %>
+          <% if breach['Description'] %>
+            <p><%= breach['Description'] %></p>
+          <% end %>
+          <% if breach['DataClasses'] && breach['DataClasses'].any? %>
+            <p><strong>Compromised Data:</strong></p>
+            <div>
+              <% breach['DataClasses'].each do |data_class| %>
+                <span class="badge badge-danger"><%= data_class %></span>
+              <% end %>
+            </div>
+          <% end %>
+          <% if breach['IsVerified'] == false %>
+            <span class="badge badge-info">Unverified</span>
+          <% end %>
+          <% if breach['IsSpamList'] %>
+            <span class="badge badge-info">Spam List</span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @result.length > 10 %>
+        <p><em>Showing first 10 of <%= @result.length %> breaches. See raw JSON below for all results.</em></p>
+      <% end %>
+
+      <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+      <pre><%= JSON.pretty_generate(@result.first(5)) %><% if @result.length > 5 %>
+... (<%= @result.length - 5 %> more breaches)<% end %></pre>
+    <% else %>
+      <p>No breaches found matching your criteria.</p>
+    <% end %>
+  </div>
+<% end %>

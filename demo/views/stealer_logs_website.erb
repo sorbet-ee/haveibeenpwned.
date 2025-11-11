@@ -1,0 +1,55 @@
+<h2>🔓 Stealer Logs - By Website Domain</h2>
+
+<p>Find which email addresses appear in stealer logs for a specific website domain.</p>
+
+<div class="info">
+  <strong>Note:</strong> This feature requires a Pwned 5+ subscription and verified domain ownership.
+</div>
+
+<form method="post" action="/stealer-logs-website">
+  <div class="form-group">
+    <label for="domain">Website Domain:</label>
+    <input type="text" id="domain" name="domain" placeholder="netflix.com" required>
+  </div>
+
+  <button type="submit">Search Stealer Logs</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Email Addresses in Stealer Logs for <%= @domain %></h3>
+
+    <% if @result.empty? %>
+      <p>No email addresses found in stealer logs for this domain.</p>
+    <% else %>
+      <p>Found <strong><%= @result.length %></strong> email address(es):</p>
+
+      <div style="margin-top: 20px;">
+        <% @result.first(50).each do |email| %>
+          <div class="breach-card">
+            <code><%= email %></code>
+          </div>
+        <% end %>
+
+        <% if @result.length > 50 %>
+          <p><em>Showing first 50 of <%= @result.length %> emails. See raw JSON for all results.</em></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result.first(20)) %><% if @result.length > 20 %>
+... (<%= @result.length - 20 %> more emails)<% end %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Use Case</h3>
+  <p>This endpoint is useful if you run a website and want to know which of your users' credentials have been exposed in stealer logs.</p>
+</div>

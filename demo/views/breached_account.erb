@@ -1,0 +1,88 @@
+<h2>🔍 Check Breached Account</h2>
+
+<p>Search for an email address to see if it has been compromised in any data breaches.</p>
+
+<form method="post" action="/breached-account">
+  <div class="form-group">
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" placeholder="test@example.com" required>
+  </div>
+
+  <div class="form-group">
+    <label for="domain">Filter by Domain (optional):</label>
+    <input type="text" id="domain" name="domain" placeholder="adobe.com">
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="truncate" value="true" checked>
+      Truncate response (only breach names)
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" name="include_unverified" value="true" checked>
+      Include unverified breaches
+    </label>
+  </div>
+
+  <button type="submit">Check Account</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success && defined?(@result) %>
+  <div class="result success">
+    <h3>Results for <%= @email %></h3>
+
+    <% if defined?(@message) %>
+      <p><%= @message %></p>
+    <% elsif @result.empty? %>
+      <p>✅ Good news! This account has not been found in any breaches.</p>
+    <% else %>
+      <p>⚠️ This account was found in <strong><%= @result.length %></strong> breach(es):</p>
+
+      <% @result.each do |breach| %>
+        <div class="breach-card">
+          <% if breach.is_a?(Hash) %>
+            <h3><%= breach['Title'] || breach['Name'] %></h3>
+            <% if breach['BreachDate'] %>
+              <p><strong>Date:</strong> <%= breach['BreachDate'] %></p>
+            <% end %>
+            <% if breach['PwnCount'] %>
+              <p><strong>Accounts Affected:</strong> <%= breach['PwnCount'].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></p>
+            <% end %>
+            <% if breach['Description'] %>
+              <p><%= breach['Description'] %></p>
+            <% end %>
+            <% if breach['DataClasses'] && breach['DataClasses'].any? %>
+              <p><strong>Compromised Data:</strong></p>
+              <div>
+                <% breach['DataClasses'].each do |data_class| %>
+                  <span class="badge badge-danger"><%= data_class %></span>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <h3><%= breach['Name'] %></h3>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Test Accounts</h3>
+  <p>Try these test accounts (with test API key <code>00000000000000000000000000000000</code>):</p>
+  <ul style="margin-left: 20px; margin-top: 10px;">
+    <li><code>account-exists@hibp-integration-tests.com</code> - Has breaches</li>
+    <li><code>spam-list-only@hibp-integration-tests.com</code> - Spam list only</li>
+    <li><code>opt-out@hibp-integration-tests.com</code> - Opted out</li>
+  </ul>
+</div>

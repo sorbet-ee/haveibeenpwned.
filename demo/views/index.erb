@@ -1,0 +1,79 @@
+<h2>Welcome to the HaveIBeenPwned Ruby Gem Demo</h2>
+
+<div class="info">
+  <h3>About This Demo</h3>
+  <p>This interactive demo showcases all features of the <strong>sorbet-hibp</strong> Ruby gem, a clean wrapper for the Have I Been Pwned API v3.</p>
+</div>
+
+<div class="result">
+  <h3>Available Features</h3>
+
+  <div style="margin-top: 20px;">
+    <h4>🔍 Breach Lookups</h4>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+      <li><strong><a href="/breached-account">Breached Account</a></strong> - Check if an email address has been in a data breach</li>
+      <li><strong><a href="/breaches">All Breaches</a></strong> - View all breaches in the HIBP system</li>
+      <li><strong><a href="/breach">Single Breach</a></strong> - Get details about a specific breach</li>
+      <li><strong><a href="/latest-breach">Latest Breach</a></strong> - View the most recently added breach</li>
+      <li><strong><a href="/data-classes">Data Classes</a></strong> - See all types of data that can be compromised</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <h4>📋 Pastes</h4>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+      <li><strong><a href="/pastes">Search Pastes</a></strong> - Find if an email appears in public pastes</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <h4>🏢 Domain Features (Requires Subscription)</h4>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+      <li><strong><a href="/breached-domain">Breached Domain</a></strong> - Get breached accounts for a domain you own</li>
+      <li><strong><a href="/subscribed-domains">Subscribed Domains</a></strong> - View your subscribed domains</li>
+      <li><strong><a href="/stealer-logs-email">Stealer Logs (Email)</a></strong> - Find stealer log domains for an email</li>
+      <li><strong><a href="/stealer-logs-website">Stealer Logs (Website)</a></strong> - Find emails in stealer logs for a website</li>
+      <li><strong><a href="/stealer-logs-domain">Stealer Logs (Domain)</a></strong> - Find email aliases in stealer logs</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <h4>🔑 Password Security</h4>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+      <li><strong><a href="/pwned-passwords">Pwned Passwords</a></strong> - Check if a password has been compromised (no API key required)</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <h4>⚙️ Account Management</h4>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+      <li><strong><a href="/subscription-status">Subscription Status</a></strong> - View your API subscription details</li>
+    </ul>
+  </div>
+</div>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Test Accounts</h3>
+  <p>You can use test accounts on the <code>hibp-integration-tests.com</code> domain with a test API key.</p>
+  <p>Example test email: <code>account-exists@hibp-integration-tests.com</code></p>
+  <p>Test API key: <code>00000000000000000000000000000000</code> (any 32-character hex string)</p>
+</div>
+
+<div class="result" style="margin-top: 30px;">
+  <h3>Quick Start</h3>
+  <p>Use the navigation menu above to explore different features of the gem. Each page provides an interactive form to test API endpoints.</p>
+
+  <h4 style="margin-top: 20px;">Installation</h4>
+  <pre>gem install sorbet-hibp</pre>
+
+  <h4 style="margin-top: 20px;">Basic Usage</h4>
+  <pre>require 'haveibeenpwned'
+
+client = HaveIBeenPwned::Client.new(
+  api_key: 'your-api-key',
+  user_agent: 'MyApp/1.0'
+)
+
+breaches = client.breached_account('test@example.com')
+puts breaches</pre>
+</div>

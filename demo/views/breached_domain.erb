@@ -1,0 +1,49 @@
+<h2>🏢 Breached Domain Search</h2>
+
+<p>Get all breached email addresses for a domain you own (requires domain verification).</p>
+
+<div class="info">
+  <strong>Note:</strong> This feature requires a Pwned 2+ subscription and domain verification in your HIBP dashboard.
+</div>
+
+<form method="post" action="/breached-domain">
+  <div class="form-group">
+    <label for="domain">Domain:</label>
+    <input type="text" id="domain" name="domain" placeholder="example.com" required>
+  </div>
+
+  <button type="submit">Search Domain</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Breached Accounts for <%= @domain %></h3>
+
+    <% if @result.empty? %>
+      <p>✅ No breached accounts found for this domain.</p>
+    <% else %>
+      <p>Found <strong><%= @result.keys.length %></strong> breached account(s):</p>
+
+      <% @result.each do |alias_name, breaches| %>
+        <div class="breach-card">
+          <h3><%= alias_name %>@<%= @domain %></h3>
+          <p><strong>Breaches:</strong></p>
+          <div>
+            <% breaches.each do |breach| %>
+              <span class="badge badge-danger"><%= breach %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>

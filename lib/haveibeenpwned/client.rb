@@ -24,15 +24,15 @@ module HaveIBeenPwned
       }
       params[:domain] = domain if domain
 
-      get("/breachedaccount/#{url_encode(account)}", params)
+      get("breachedaccount/#{url_encode(account)}", params)
     end
 
     def breached_domain(domain)
-      get("/breacheddomain/#{domain}")
+      get("breacheddomain/#{url_encode(domain)}")
     end
 
     def subscribed_domains
-      get("/subscribeddomains")
+      get("subscribeddomains")
     end
 
     def breaches(domain: nil, is_spam_list: nil)
@@ -40,45 +40,45 @@ module HaveIBeenPwned
       params[:domain] = domain if domain
       params[:isSpamList] = is_spam_list unless is_spam_list.nil?
 
-      get("/breaches", params)
+      get("breaches", params)
     end
 
     def breach(name)
-      get("/breach/#{name}")
+      get("breach/#{url_encode(name)}")
     end
 
     def latest_breach
-      get("/latestbreach")
+      get("latestbreach")
     end
 
     def data_classes
-      get("/dataclasses")
+      get("dataclasses")
     end
 
     # Stealer Logs
 
     def stealer_logs_by_email(email)
-      get("/stealerlogsbyemail/#{url_encode(email)}")
+      get("stealerlogsbyemail/#{url_encode(email)}")
     end
 
     def stealer_logs_by_website_domain(domain)
-      get("/stealerlogsbywebsitedomain/#{domain}")
+      get("stealerlogsbywebsitedomain/#{url_encode(domain)}")
     end
 
     def stealer_logs_by_email_domain(domain)
-      get("/stealerlogsbyemaildomain/#{domain}")
+      get("stealerlogsbyemaildomain/#{url_encode(domain)}")
     end
 
     # Pastes
 
     def pastes(account)
-      get("/pasteaccount/#{url_encode(account)}")
+      get("pasteaccount/#{url_encode(account)}")
     end
 
     # Subscription
 
     def subscription_status
-      get("/subscription/status")
+      get("subscription/status")
     end
 
     private

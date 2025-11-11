@@ -1,0 +1,49 @@
+<h2>🔓 Stealer Logs - By Email</h2>
+
+<p>Find which website domains appear in stealer logs for a given email address.</p>
+
+<div class="info">
+  <strong>Note:</strong> This feature requires a Pwned 5+ subscription and verified domain ownership.
+</div>
+
+<form method="post" action="/stealer-logs-email">
+  <div class="form-group">
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" placeholder="user@example.com" required>
+  </div>
+
+  <button type="submit">Search Stealer Logs</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Stealer Log Domains for <%= @email %></h3>
+
+    <% if @result.empty? %>
+      <p>✅ No stealer log entries found for this email.</p>
+    <% else %>
+      <p>This email appears in stealer logs for <strong><%= @result.length %></strong> domain(s):</p>
+
+      <div style="margin-top: 20px;">
+        <% @result.each do |domain| %>
+          <span class="badge badge-danger"><%= domain %></span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>About Stealer Logs</h3>
+  <p>Stealer logs are databases of credentials stolen by information-stealing malware. They contain usernames, passwords, and cookies harvested from infected devices.</p>
+  <p>Finding credentials in stealer logs indicates they were actively stolen from a compromised device.</p>
+</div>

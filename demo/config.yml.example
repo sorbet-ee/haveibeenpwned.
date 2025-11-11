@@ -1,0 +1,12 @@
+# HaveIBeenPwned Demo App Configuration
+# Copy this file to config.yml and add your API key
+
+# Get your API key from: https://haveibeenpwned.com/API/Key
+api_key: 'your-api-key-here'
+
+# User agent for API requests (required by HIBP API)
+user_agent: 'HIBP-Ruby-Demo/1.0'
+
+# For testing without an API key, use test credentials:
+# api_key: '00000000000000000000000000000000'
+# user_agent: 'Testing'

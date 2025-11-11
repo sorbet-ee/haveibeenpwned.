@@ -239,6 +239,184 @@ rescue HaveIBeenPwned::RateLimitError => e
 end
 ```
 
+## Interactive Demo Application
+
+An interactive **Sinatra web application** is included in the `demo/` directory to showcase all features of the gem. The demo provides a beautiful, user-friendly interface to test every API endpoint.
+
+### What's Included
+
+The demo application features:
+
+- **Breach Lookups**: Check if email addresses appear in data breaches
+- **Password Checker**: Verify if passwords have been compromised using k-anonymity
+- **Pastes Search**: Find if emails appear in public pastes
+- **Single Breach Details**: Get comprehensive information about specific breaches
+- **All Breaches**: Browse the complete database of breaches
+- **Data Classes**: View all types of compromised data
+- **Domain Features**: Search breached accounts for verified domains (requires subscription)
+- **Stealer Logs**: Check for credentials in stealer logs (requires Pwned 5+ subscription)
+- **Subscription Status**: View your API key's subscription tier and rate limits
+
+### Quick Start
+
+Launch the demo with a single command:
+
+```bash
+make demo-web
+```
+
+This will:
+1. Install dependencies (Sinatra, Puma, etc.)
+2. Create a configuration file if needed
+3. Start the web server on http://localhost:4567
+
+### Manual Setup
+
+If you prefer manual setup:
+
+```bash
+# Navigate to demo directory
+cd demo
+
+# Install dependencies
+bundle install
+
+# Copy configuration template
+cp config.yml.example config.yml
+
+# Edit config.yml and add your API key
+nano config.yml
+
+# Start the server
+bundle exec ruby app.rb
+```
+
+Then visit **http://localhost:4567** in your browser.
+
+### Configuration
+
+The demo uses a `config.yml` file with the following parameters:
+
+```yaml
+# Your Have I Been Pwned API key
+# Get one at: https://haveibeenpwned.com/API/Key
+api_key: 'your-api-key-here'
+
+# User agent string (required by HIBP API)
+# Format: YourAppName/Version
+user_agent: 'HIBP-Ruby-Demo/1.0'
+```
+
+#### Configuration Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `api_key` | Yes | Your HIBP API key (32-character hex string) |
+| `user_agent` | Yes | Identifier for your application (e.g., "MyApp/1.0") |
+
+#### Using Test Credentials
+
+For testing without a real API key, use these test credentials:
+
+```yaml
+api_key: '00000000000000000000000000000000'
+user_agent: 'Testing'
+```
+
+Then use test email addresses like:
+- `account-exists@hibp-integration-tests.com` - Has breaches
+- `opt-out@hibp-integration-tests.com` - No breaches (opted out)
+- `spam-list-only@hibp-integration-tests.com` - Spam list only
+
+### Available Make Targets
+
+The Makefile provides convenient commands for the demo:
+
+```bash
+# Launch the web demo application
+make demo-web
+
+# Setup demo (install dependencies, create config)
+make demo-web-setup
+
+# Create/recreate configuration file
+make demo-web-config
+```
+
+### Features by Subscription Tier
+
+Different features require different subscription levels:
+
+**Free Features (No API Key):**
+- Pwned Passwords checker
+
+**Pwned 1+ (Requires API Key):**
+- Breach account lookups
+- All breaches listing
+- Single breach details
+- Pastes search
+- Data classes
+
+**Pwned 2+ Features:**
+- Domain breach search
+- Subscribed domains list
+
+**Pwned 5+ Features:**
+- Stealer logs by email
+- Stealer logs by website domain
+- Stealer logs by email domain
+
+### Project Structure
+
+```
+demo/
+├── app.rb                 # Main Sinatra application
+├── config.yml             # Your API configuration (gitignored)
+├── config.yml.example     # Configuration template
+├── Gemfile                # Demo dependencies
+├── README.md              # Demo-specific documentation
+└── views/                 # ERB templates for each feature
+    ├── layout.erb         # Main layout with navigation
+    ├── index.erb          # Homepage
+    ├── breached_account.erb
+    ├── breaches.erb
+    ├── breach.erb
+    ├── pastes.erb
+    ├── pwned_passwords.erb
+    └── ... (more templates)
+```
+
+### Security Notes
+
+- The `config.yml` file is gitignored to protect your API key
+- Never commit real API keys to version control
+- The demo loads the gem from local source (`../lib`) for development
+- Pwned Passwords uses k-anonymity to protect checked passwords
+
+### Deployment
+
+The demo can be deployed to any Rack-compatible platform:
+
+**Heroku:**
+```bash
+cd demo
+git init
+heroku create
+git add .
+git commit -m "Deploy HIBP demo"
+git push heroku master
+heroku config:set HIBP_API_KEY=your-key-here
+```
+
+**Docker:**
+```bash
+cd demo
+docker build -t hibp-demo .
+docker run -p 4567:4567 -e HIBP_API_KEY=your-key hibp-demo
+```
+
+For more details, see [demo/README.md](demo/README.md).
+
 ## Design Philosophy
 
 This gem follows KISS, DRY, YAGNI, and shibui principles:

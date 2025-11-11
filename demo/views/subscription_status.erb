@@ -1,0 +1,48 @@
+<h2>⚙️ Subscription Status</h2>
+
+<p>View your Have I Been Pwned API subscription details.</p>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Subscription Details</h3>
+
+    <div class="breach-card">
+      <% if @result['SubscriptionName'] %>
+        <h3><%= @result['SubscriptionName'] %></h3>
+      <% end %>
+      <% if @result['Description'] %>
+        <p><%= @result['Description'] %></p>
+      <% end %>
+      <% if @result['SubscribedUntil'] %>
+        <p><strong>Subscribed Until:</strong> <%= @result['SubscribedUntil'] %></p>
+      <% end %>
+      <% if @result['Rpm'] %>
+        <p><strong>Rate Limit:</strong> <%= @result['Rpm'] %> requests per minute</p>
+      <% end %>
+      <% if @result['DomainSearchMaxBreachedAccounts'] %>
+        <p><strong>Max Breached Accounts:</strong> <%= @result['DomainSearchMaxBreachedAccounts'] %></p>
+      <% end %>
+    </div>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>API Subscription Tiers</h3>
+  <p>Have I Been Pwned offers different subscription tiers with varying features and rate limits:</p>
+  <ul style="margin-left: 20px; margin-top: 10px;">
+    <li><strong>Pwned 1:</strong> Basic breach search</li>
+    <li><strong>Pwned 2:</strong> Adds domain search</li>
+    <li><strong>Pwned 3:</strong> Higher rate limits</li>
+    <li><strong>Pwned 5+:</strong> Includes stealer logs</li>
+  </ul>
+  <p style="margin-top: 10px;">Get your API key at <a href="https://haveibeenpwned.com/API/Key" target="_blank">haveibeenpwned.com/API/Key</a></p>
+</div>

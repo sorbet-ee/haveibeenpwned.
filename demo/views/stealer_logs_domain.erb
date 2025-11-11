@@ -1,0 +1,55 @@
+<h2>🔓 Stealer Logs - By Email Domain</h2>
+
+<p>Find which email aliases from your domain appear in stealer logs and for which websites.</p>
+
+<div class="info">
+  <strong>Note:</strong> This feature requires a Pwned 5+ subscription and verified domain ownership.
+</div>
+
+<form method="post" action="/stealer-logs-domain">
+  <div class="form-group">
+    <label for="domain">Email Domain:</label>
+    <input type="text" id="domain" name="domain" placeholder="example.com" required>
+  </div>
+
+  <button type="submit">Search Stealer Logs</button>
+</form>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Stealer Log Results for <%= @domain %></h3>
+
+    <% if @result.empty? %>
+      <p>✅ No email addresses from this domain found in stealer logs.</p>
+    <% else %>
+      <p>Found <strong><%= @result.keys.length %></strong> email alias(es):</p>
+
+      <% @result.each do |alias_name, websites| %>
+        <div class="breach-card">
+          <h3><%= alias_name %>@<%= @domain %></h3>
+          <p><strong>Found in stealer logs for these websites:</strong></p>
+          <div>
+            <% websites.each do |website| %>
+              <span class="badge badge-danger"><%= website %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Domain Monitoring</h3>
+  <p>This endpoint lets you monitor which of your organization's email addresses have been compromised and where they were used.</p>
+  <p>You must verify ownership of the email domain in your HIBP dashboard to use this feature.</p>
+</div>

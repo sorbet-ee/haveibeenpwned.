@@ -1,0 +1,46 @@
+<h2>🌐 Subscribed Domains</h2>
+
+<p>View all domains associated with your API key (requires domain subscription).</p>
+
+<% if defined?(@error) %>
+  <div class="error">
+    <strong>Error:</strong> <%= @error %>
+  </div>
+<% end %>
+
+<% if defined?(@success) && @success %>
+  <div class="result success">
+    <h3>Your Subscribed Domains</h3>
+
+    <% if @result.empty? %>
+      <p>No domains are currently subscribed to your account.</p>
+    <% else %>
+      <p>Found <strong><%= @result.length %></strong> subscribed domain(s):</p>
+
+      <% @result.each do |domain| %>
+        <div class="breach-card">
+          <h3><%= domain['DomainName'] %></h3>
+          <% if domain['PwnCount'] %>
+            <p><strong>Pwned Accounts:</strong> <%= domain['PwnCount'] %></p>
+          <% end %>
+          <% if domain['NextSubscriptionDate'] %>
+            <p><strong>Next Subscription Date:</strong> <%= domain['NextSubscriptionDate'] %></p>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <h4 style="margin-top: 30px;">Raw JSON Response:</h4>
+    <pre><%= JSON.pretty_generate(@result) %></pre>
+  </div>
+<% end %>
+
+<div class="info" style="margin-top: 30px;">
+  <h3>Domain Subscription</h3>
+  <p>To use domain search features, you need to:</p>
+  <ol style="margin-left: 20px; margin-top: 10px;">
+    <li>Have a Pwned 2+ subscription</li>
+    <li>Verify domain ownership in your HIBP dashboard</li>
+    <li>Subscribe to domain monitoring</li>
+  </ol>
+</div>
